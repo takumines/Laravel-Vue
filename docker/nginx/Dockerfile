@@ -1,19 +1,15 @@
-FROM node:16-alpine as node
-FROM nginx:1.20-alpine
+FROM nginx:1.19-alpine
 SHELL ["/bin/ash", "-oeux", "pipefail", "-c"]
-
 ENV TZ=UTC
 
 RUN apk update && \
   apk add --update --no-cache --virtual=.build-dependencies g++
 
-# node command
-COPY --from=node /usr/local/bin /usr/local/bin
-# npm command
-COPY --from=node /usr/local/lib /usr/local/lib
-# yarn command
-COPY --from=node /opt /opt
+COPY --from=node:14.15-alpine /usr/local/bin /usr/local/bin
+COPY --from=node:14.15-alpine /usr/local/lib /usr/local/lib
+COPY --from=node:14.15-alpine /opt /opt
+
 # nginx config file
 COPY ./docker/nginx/*.conf /etc/nginx/conf.d/
 
-WORKDIR /work/src
+WORKDIR /var/www/html
