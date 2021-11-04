@@ -59,6 +59,10 @@ export default {
       },
     };
   },
+  mounted() {
+    this.loginForm.email = 'test';
+    this.loginForm.password = this.password;
+  },
   methods: {
     login() {
       let params = {
