@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class RegisterController
 {
@@ -15,10 +18,18 @@ class RegisterController
     }
 
     /**
-     * @param Request $request
+     * @param RegisterRequest $request
+     * @return \View
      */
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        logger($request->all());
+        $data = $request->validated();
+        logger($data);
+        $user = User::create([
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+        ]);
+
+        return view('auth.login');
     }
 }
