@@ -1,9 +1,8 @@
 <?php
 
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\PostController;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,15 +15,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/login', [LoginController::class, 'loginForm']);
-Route::post('/login', [LoginController::class, 'login'])->name('login');
-Route::get('/register', [RegisterController::class, 'registerForm']);
-Route::post('/register', [RegisterController::class, 'register']);
-
-Route::group(['middleware' => 'auth'], function() {
-    //
+Route::get('/', function () {
+    return Inertia::render('Welcome', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'laravelVersion' => Application::VERSION,
+        'phpVersion' => PHP_VERSION,
+    ]);
 });
 
-Route::get('/', [PostController::class, 'index'])->name('post.index');
-Route::get('/post/create', [PostController::class, 'create']);
-Route::post('/post/create', [PostController::class, 'store']);
+Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
+    return Inertia::render('Dashboard');
+})->name('dashboard');
